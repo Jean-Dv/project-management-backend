@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  tasks       Task[]
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  status      StatusTask @default(TODO)
+  completed   Boolean    @default(false)
+  project     Project?   @relation(fields: [projectId], references: [id])
+  projectId   Int?
+  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime   @default(now())
+}
+
+enum StatusTask {
+  TODO
+  PROGRESS
+  BLOCKED
+  CODEREVIEW
+  DONE
+}
