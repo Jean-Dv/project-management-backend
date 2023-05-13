@@ -1,11 +1,11 @@
-import { ProjectInput, Project } from 'types/common/interfaces';
-import { createProject, deleteProject, getProject, getProjects, updateProject } from './controller';
+import { ProjectInput, Project, Task } from 'types/common/interfaces';
+import { createProject, deleteProject, getProject, getProjects, updateProject, getTasksOfProject } from './controller';
 
 export const ProjectQueries = {
-    getProjects: async (): Promise<Project[]> => {
+    projects: async (): Promise<Project[]> => {
         return await getProjects()
     },
-    getProject: async (_: ParentNode, id: number): Promise<Project> => {
+    project: async (_: ParentNode, id: number): Promise<Project> => {
         return await getProject(id)
     }
 }
@@ -19,5 +19,11 @@ export const ProjectMutations = {
     },
     deleteProject: async (_: ParentNode, id: number): Promise<Project> => {
         return await deleteProject(id)
+    }
+}
+
+export const ProjectResolver = {
+    tasks: async (parent: Project): Promise<Task[]> => {
+        return await getTasksOfProject(parent.id)
     }
 }

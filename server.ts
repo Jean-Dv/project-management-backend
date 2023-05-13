@@ -10,6 +10,11 @@ import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 
 import { MyContext } from 'types/common/interfaces'
+import { typeDefs as typeDefsProject } from '@app/project/typeDefs'
+import { typeDefs as typeDefsTask } from '@app/tasks/typeDefs'
+
+import { ProjectQueries, ProjectMutations, ProjectResolver } from '@app/project/resolvers'
+import { TaskQueries, TaskMutations, TaskResolver } from '@app/tasks/resolvers'
 
 export class Server {
     readonly app!: Application
@@ -28,15 +33,23 @@ export class Server {
         this.app = express()
         this.httpServer = http.createServer(this.app)
         this.server = new ApolloServer<MyContext>({
-            typeDefs: `
-                type Query {
-                    hello: String
-                }
-            `,
+            typeDefs: [typeDefsProject, typeDefsTask],
             resolvers: {
                 Query: {
-                    hello: () => 'Hello World!'
+                    ...ProjectQueries,
+                    ...TaskQueries
+                },
+                Mutation: {
+                    ...ProjectMutations,
+                    ...TaskMutations
+                },
+                Project: {
+                    ...ProjectResolver,
+                },
+                Task: {
+                    ...TaskResolver,
                 }
+
             },
             plugins: [ApolloServerPluginDrainHttpServer({ httpServer: this.httpServer })],
         })

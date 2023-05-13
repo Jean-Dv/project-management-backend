@@ -1,7 +1,7 @@
 import LOGGER from '@config/logger';
 import prisma from "@root/prisma/client";
-import { ProjectInput, Project } from "types/common/interfaces";
-import { CreateProject, DeleteProject, GetProject, GetProjects, UpdateProject } from "types/common/functions";
+import { ProjectInput, Project, Task } from "types/common/interfaces";
+import { CreateProject, DeleteProject, GetProject, GetProjects, GetTasksOfProject, UpdateProject } from "types/common/functions";
 
 export const getProjects: GetProjects = async (): Promise<Project[]> => {
     try {
@@ -24,6 +24,20 @@ export const getProject: GetProject = async (id: number): Promise<Project | null
     } catch (e) {
         LOGGER.debug.error(e)
         throw new Error("Error getting project")
+    }
+}
+
+export const getTasksOfProject: GetTasksOfProject = async (projectId: number): Promise<Task[]> => {
+    try {
+        const tasks = await prisma.task.findMany({
+            where: {
+                projectId
+            }
+        })
+        return tasks
+    } catch (e) {
+        LOGGER.debug.error(e)
+        throw new Error("Error getting tasks of project")
     }
 }
 
