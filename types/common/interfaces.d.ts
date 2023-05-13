@@ -30,7 +30,7 @@ export interface Task {
     description: string | null
     status: Status
     completed: boolean
-    project: Project
+    project?: Project | null
     updatedAt: Date
     createdAt: Date
 }
